@@ -72,6 +72,10 @@ class LoginViewController: UIViewController {
                                                                                   style: .done,
                                                                                   target: self,
                                                                                   action: #selector(goToRegister))
+        
+        loginButton.addTarget(self, action: #selector(loginAccount), for: .touchUpInside)
+        emailField.delegate = self
+        passwordField.delegate = self
         view.addSubview(scrollView)
         scrollView.addSubview(logo)
         scrollView.addSubview(emailField)
@@ -103,9 +107,41 @@ class LoginViewController: UIViewController {
                                    height: 52)
     }
     
+    @objc private func loginAccount() {
+        guard let email = emailField.text,
+              let password = passwordField.text,
+              !email.isEmpty,
+              !password.isEmpty,
+              password.count >= 6 else {
+            alertUserLoginError()
+            return
+        }
+        // firebase login
+    }
+    
+    func alertUserLoginError() {
+        let alert = UIAlertController(title: "Error",
+                                      message: "Please enter all information to log in.",
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
+    
     @objc private func goToRegister() {
         let viewController = RegisterViewController()
         navigationController?.pushViewController( viewController, animated: true)
     }
     
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == emailField {
+            passwordField.becomeFirstResponder()
+        } else if textField == passwordField {
+            loginAccount()
+        }
+        
+        return true
+    }
 }
