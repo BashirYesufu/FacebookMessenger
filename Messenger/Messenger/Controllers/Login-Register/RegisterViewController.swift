@@ -188,26 +188,44 @@ extension RegisterViewController: UITextFieldDelegate {
     }
 }
 
-extension RegisterViewController: UIImagePickerControllerDelegate {
+extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func presentPhotoActionSheet() {
         let actionSheet = UIAlertController(title: "Profile Picture", message: "Please upload a picture", preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        actionSheet.addAction(UIAlertAction(title: "Take Photo", style: .default, handler: { _ in
-            
+        actionSheet.addAction(UIAlertAction(title: "Take Photo", style: .default, handler: { [weak self] _ in
+            self?.presentCamera()
         }))
-        actionSheet.addAction(UIAlertAction(title: "Choose Photo", style: .default, handler: { _ in
-            
+        actionSheet.addAction(UIAlertAction(title: "Choose Photo", style: .default, handler: { [weak self] _ in
+            self?.presentPhotoPicker()
         }))
         present(actionSheet, animated: true)
     }
     
+    func presentCamera() {
+        let imageController = UIImagePickerController()
+        imageController.sourceType = .camera
+        imageController.delegate = self
+        imageController.allowsEditing = true
+        present(imageController, animated: true)
+    }
+    
+    func presentPhotoPicker() {
+        let imageController = UIImagePickerController()
+        imageController.sourceType = .photoLibrary
+        imageController.delegate = self
+        imageController.allowsEditing = true
+        present(imageController, animated: true)
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
+        picker.dismiss(animated: true, completion: nil)
+        guard let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else { return }
+        self.profileImage.image = selectedImage
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-         
+        picker.dismiss(animated: true, completion: nil)
     }
     
 }
