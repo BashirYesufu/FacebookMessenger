@@ -122,41 +122,24 @@ class RegisterViewController: UIViewController {
     }
     
     @objc private func changeProfilePicture() {
-        print("Changing profile image")
+        presentPhotoActionSheet()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
         let size = scrollView.width/3
-        profileImage.frame = CGRect(x: (scrollView.width - size)/2,
-                            y: 20,
-                            width: size,
-                            height: size)
+        profileImage.frame = CGRect(x: (scrollView.width - size)/2, y: 20, width: size, height: size)
         
-        firstNameField.frame = CGRect(x: 30,
-                                  y: profileImage.bottom + 10,
-                                  width: scrollView.width - 60,
-                                  height: 52)
+        firstNameField.frame = CGRect(x: 30, y: profileImage.bottom + 10, width: scrollView.width - 60, height: 52)
         
-        lastNameField.frame = CGRect(x: 30,
-                                  y: firstNameField.bottom + 10,
-                                  width: scrollView.width - 60,
-                                  height: 52)
+        lastNameField.frame = CGRect(x: 30, y: firstNameField.bottom + 10, width: scrollView.width - 60, height: 52)
         
-        emailField.frame = CGRect(x: 30,
-                                  y: lastNameField.bottom + 10,
-                                  width: scrollView.width - 60,
-                                  height: 52)
+        emailField.frame = CGRect(x: 30, y: lastNameField.bottom + 10, width: scrollView.width - 60, height: 52)
         
-        passwordField.frame = CGRect(x: 30,
-                                     y: emailField.bottom + 10,
-                                     width: scrollView.width - 60,
-                                     height: 52)
-        registerButton.frame = CGRect(x: 30,
-                                   y: passwordField.bottom + 10,
-                                   width: scrollView.width - 60,
-                                   height: 52)
+        passwordField.frame = CGRect(x: 30, y: emailField.bottom + 10, width: scrollView.width - 60, height: 52)
+        
+        registerButton.frame = CGRect(x: 30, y: passwordField.bottom + 10, width: scrollView.width - 60, height: 52)
     }
     
     @objc private func registerAccount() {
@@ -181,9 +164,7 @@ class RegisterViewController: UIViewController {
     }
     
     func alertUserLoginError() {
-        let alert = UIAlertController(title: "Error",
-                                      message: "Please enter all information to register.",
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error", message: "Please enter all information to register.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
@@ -205,4 +186,28 @@ extension RegisterViewController: UITextFieldDelegate {
         
         return true
     }
+}
+
+extension RegisterViewController: UIImagePickerControllerDelegate {
+    
+    func presentPhotoActionSheet() {
+        let actionSheet = UIAlertController(title: "Profile Picture", message: "Please upload a picture", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        actionSheet.addAction(UIAlertAction(title: "Take Photo", style: .default, handler: { _ in
+            
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Choose Photo", style: .default, handler: { _ in
+            
+        }))
+        present(actionSheet, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+         
+    }
+    
 }
