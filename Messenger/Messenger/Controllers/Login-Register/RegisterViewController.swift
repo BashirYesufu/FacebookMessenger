@@ -12,6 +12,7 @@ class RegisterViewController: UIViewController {
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
+        scrollView.isUserInteractionEnabled = true
         return scrollView
     }()
     
@@ -20,6 +21,7 @@ class RegisterViewController: UIViewController {
         imageView.image = UIImage(systemName: "person")
         imageView.tintColor = .gray
         imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = true
         return imageView
     }()
     
@@ -92,6 +94,7 @@ class RegisterViewController: UIViewController {
         button.layer.cornerRadius = 12
         button.layer.masksToBounds = true
         button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        button.addTarget(self, action: #selector(registerAccount), for: .touchUpInside)
         return button
     }()
     
@@ -99,14 +102,16 @@ class RegisterViewController: UIViewController {
         super.viewDidLoad()
         title = "Register"
         view.backgroundColor = .white
-//        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
-//                                                            style: .done,
-//                                                            target: self,
-//                                                            action: #selector(goToRegister))
-        
-        registerButton.addTarget(self, action: #selector(registerAccount), for: .touchUpInside)
+        addSubviews()
         emailField.delegate = self
         passwordField.delegate = self
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(changeProfilePicture))
+        
+        profileImage.addGestureRecognizer(gesture)
+    }
+    
+    private func addSubviews() {
         view.addSubview(scrollView)
         scrollView.addSubview(profileImage)
         scrollView.addSubview(firstNameField)
@@ -114,13 +119,6 @@ class RegisterViewController: UIViewController {
         scrollView.addSubview(emailField)
         scrollView.addSubview(passwordField)
         scrollView.addSubview(registerButton)
-        
-        profileImage.isUserInteractionEnabled = true
-        scrollView.isUserInteractionEnabled = true
-        
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(changeProfilePicture))
-        
-        profileImage.addGestureRecognizer(gesture)
     }
     
     @objc private func changeProfilePicture() {
