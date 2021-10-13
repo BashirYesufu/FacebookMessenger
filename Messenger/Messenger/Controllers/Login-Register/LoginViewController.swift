@@ -69,10 +69,7 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         title = "Log In"
         view.backgroundColor = .white
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
-                                                                                  style: .done,
-                                                                                  target: self,
-                                                                                  action: #selector(goToRegister))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(goToRegister))
         
         loginButton.addTarget(self, action: #selector(loginAccount), for: .touchUpInside)
         emailField.delegate = self
@@ -108,20 +105,20 @@ class LoginViewController: UIViewController {
         }
         // firebase login
         
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
-            guard let result = authResult, error == nil else {
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+            guard let strongSelf = self, error == nil else {
                 print("Failed to login with \(email)")
                 return
             }
-            let user = result.user
-            print("Logged in user \(user)")
+            let conversations = ConversationsViewController()
+            UserDefaults.standard.set(true, forKey: "Logged In")
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+            strongSelf.navigationController?.pushViewController(conversations, animated: true)
         }
     }
     
     func alertUserLoginError() {
-        let alert = UIAlertController(title: "Error",
-                                      message: "Please enter all information to log in.",
-                                      preferredStyle: .alert)
+        let alert = UIAlertController(title: "Error", message: "Please enter all information to log in.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
@@ -139,7 +136,6 @@ extension LoginViewController: UITextFieldDelegate {
         } else if textField == passwordField {
             loginAccount()
         }
-        
         return true
     }
 }

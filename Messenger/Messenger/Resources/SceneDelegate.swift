@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let conversations = ConversationsViewController()
         let login = LoginViewController()
         let isLoggedIn = UserDefaults.standard.bool(forKey: "Logged In")
-        if !isLoggedIn {
+        if isLoggedIn == false {
             navigationController = UINavigationController(rootViewController: login)
         } else {
             navigationController = UINavigationController(rootViewController: conversations)
