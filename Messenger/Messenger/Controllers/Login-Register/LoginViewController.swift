@@ -114,6 +114,7 @@ class LoginViewController: UIViewController {
             UserDefaults.standard.set(true, forKey: "Logged In")
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             strongSelf.navigationController?.pushViewController(conversations, animated: true)
+            strongSelf.navigationController?.navigationBar.isHidden = true
         }
     }
     
