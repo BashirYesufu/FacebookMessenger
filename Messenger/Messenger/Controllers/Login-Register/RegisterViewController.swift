@@ -174,8 +174,11 @@ class RegisterViewController: UIViewController {
             }
             FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
                 guard error == nil, authResult != nil else { return }
+                let conversations = ConversationsViewController()
                 DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+                strongSelf.navigationController?.pushViewController(conversations, animated: true)
             }
         }
     }
