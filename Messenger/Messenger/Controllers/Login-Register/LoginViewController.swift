@@ -88,24 +88,10 @@ class LoginViewController: UIViewController {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
         let size = scrollView.width/3
-        logo.frame = CGRect(x: (scrollView.width - size)/2,
-                            y: 20,
-                            width: size,
-                            height: size)
-        
-        emailField.frame = CGRect(x: 30,
-                                  y: logo.bottom + 10,
-                                  width: scrollView.width - 60,
-                                  height: 52)
-        
-        passwordField.frame = CGRect(x: 30,
-                                     y: emailField.bottom + 10,
-                                     width: scrollView.width - 60,
-                                     height: 52)
-        loginButton.frame = CGRect(x: 30,
-                                   y: passwordField.bottom + 10,
-                                   width: scrollView.width - 60,
-                                   height: 52)
+        logo.frame = CGRect(x: (scrollView.width - size)/2, y: 20, width: size, height: size)
+        emailField.frame = CGRect(x: 30, y: logo.bottom + 10, width: scrollView.width - 60, height: 52)
+        passwordField.frame = CGRect(x: 30, y: emailField.bottom + 10, width: scrollView.width - 60, height: 52)
+        loginButton.frame = CGRect(x: 30, y: passwordField.bottom + 10, width: scrollView.width - 60, height: 52)
     }
     
     @objc private func loginAccount() {
@@ -144,7 +130,6 @@ class LoginViewController: UIViewController {
         let viewController = RegisterViewController()
         navigationController?.pushViewController( viewController, animated: true)
     }
-    
 }
 
 extension LoginViewController: UITextFieldDelegate {

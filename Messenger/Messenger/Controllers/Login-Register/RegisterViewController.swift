@@ -19,7 +19,7 @@ class RegisterViewController: UIViewController {
     
     private let profileImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person")
+        imageView.image = UIImage(systemName: "person.circle")
         imageView.tintColor = .gray
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
