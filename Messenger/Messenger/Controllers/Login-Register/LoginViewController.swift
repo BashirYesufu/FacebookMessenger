@@ -66,11 +66,7 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private let facebookLoginButton: FBLoginButton = {
-        let button = FBLoginButton()
-        button.permissions = ["public_profile", "email"]
-        return button
-    }()
+    private let facebookLoginButton = FBLoginButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,6 +85,7 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookLoginButton)
+        facebookLoginButton.permissions = ["public_profile", "email"]
     }
     
     override func viewDidLayoutSubviews() {
@@ -122,12 +119,17 @@ class LoginViewController: UIViewController {
                 print("Failed to login with \(email)")
                 return
             }
-            let conversations = ConversationsViewController()
-            UserDefaults.standard.set(true, forKey: "Logged In")
-            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-            strongSelf.navigationController?.pushViewController(conversations, animated: true)
-            strongSelf.navigationController?.navigationBar.isHidden = true
+            
+            strongSelf.loginCompletion()
         }
+    }
+    
+    func loginCompletion() {
+        let conversations = ConversationsViewController()
+        UserDefaults.standard.set(true, forKey: "Logged In")
+        navigationController?.dismiss(animated: true, completion: nil)
+        navigationController?.pushViewController(conversations, animated: true)
+        navigationController?.navigationBar.isHidden = true
     }
     
     func alertUserLoginError() {
@@ -168,7 +170,7 @@ extension LoginViewController: LoginButtonDelegate {
                 return
             }
             print("Successfully logged in user")
-            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+            strongSelf.loginCompletion()
         }
     }
     
