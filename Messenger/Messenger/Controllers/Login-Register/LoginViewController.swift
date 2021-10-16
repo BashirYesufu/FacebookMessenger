@@ -10,7 +10,7 @@ import FirebaseAuth
 import FBSDKLoginKit
 
 class LoginViewController: UIViewController {
-
+    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.clipsToBounds = true
@@ -109,9 +109,9 @@ class LoginViewController: UIViewController {
               !email.isEmpty,
               !password.isEmpty,
               password.count >= 6 else {
-            alertUserLoginError()
-            return
-        }
+                  alertUserLoginError()
+                  return
+              }
         // firebase login
         
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
@@ -157,24 +157,64 @@ extension LoginViewController: UITextFieldDelegate {
 
 extension LoginViewController: LoginButtonDelegate {
     
+    // Delegate function for when facebook login did complete
     func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        
+        // Unwrapping the token from facebook
         guard let token = result?.token?.tokenString else {
             print("Failed to login user with facebook")
             return
         }
-        let credential = FacebookAuthProvider.credential(withAccessToken: token)
-        FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
-            guard let strongSelf = self else { return  }
-            guard authResult != nil, error == nil else {
-                print("Facebook credentials login failed, MFA may be needed")
+        
+        // Request object to facebook to get the email and name for the logged in user
+        let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email, name"], tokenString: token, version: nil, httpMethod: .get)
+        
+        // Unwrapping the result of the request to get the name and email from the result dictionary
+        facebookRequest.start { connection, result, error in
+            guard let result = result as? [String: Any],
+                  error == nil else {
+                      print("Failed to make facebook graph request")
+                      return
+                  }
+            print("\(result)")
+            guard let userName = result["name"] as? String,
+                  let email = result["email"] as? String else {
+                      print("Failed to get email and name from Facebook results")
+                      return
+                  }
+            
+            // Splitting the name gotten from the result to access the first and last name
+            let nameComponents = userName.components(separatedBy: " ")
+            guard nameComponents.count == 2 else {
                 return
             }
-            print("Successfully logged in user")
-            strongSelf.loginCompletion()
-        }
+            
+            let firstName = nameComponents[0]
+            let lastName = nameComponents[1]
+            
+            // Using Database manager object to chect if the user already exist in our database
+            DatabaseManager.shared.validateNewUser(with: email) { exists in
+                if !exists {
+                    DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                }
+            }
+            
+            // Trading the facebook token to get a firebase credential for signing in
+            let credential = FacebookAuthProvider.credential(withAccessToken: token)
+            FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+                
+                guard let strongSelf = self else { return  }
+                guard authResult != nil, error == nil else {
+                    print("Facebook credentials login failed, MFA may be needed")
+                    return
+                }
+                print("Successfully logged in user")
+                strongSelf.loginCompletion()
+            }
+        }   
     }
     
     func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
-         
+        
     }
 }
