@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FBSDKCoreKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -18,13 +19,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
         var navigationController = UINavigationController()
-        let conversations = ConversationsViewController()
+        let landingPage = LandingTabBarController()
+        landingPage.tabBar.isHidden = false
         let login = LoginViewController()
         let isLoggedIn = UserDefaults.standard.bool(forKey: "Logged In")
         if isLoggedIn == false {
             navigationController = UINavigationController(rootViewController: login)
         } else {
-            navigationController = UINavigationController(rootViewController: conversations)
+            navigationController = UINavigationController(rootViewController: landingPage)
         }
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
@@ -33,6 +35,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
     }
 
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else {
+            return
+        }
+
+        ApplicationDelegate.shared.application(
+            UIApplication.shared,
+            open: url,
+            sourceApplication: nil,
+            annotation: [UIApplication.OpenURLOptionsKey.annotation]
+        )
+    }
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
@@ -63,4 +77,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
 }
-
