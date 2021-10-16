@@ -66,7 +66,11 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private let facebookLoginButton = FBLoginButton()
+    private let facebookLoginButton: FBLoginButton = {
+        let button = FBLoginButton()
+        button.permissions = ["public_profile", "email"]
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,6 +81,8 @@ class LoginViewController: UIViewController {
         loginButton.addTarget(self, action: #selector(loginAccount), for: .touchUpInside)
         emailField.delegate = self
         passwordField.delegate = self
+        facebookLoginButton.delegate = self
+        
         view.addSubview(scrollView)
         scrollView.addSubview(logo)
         scrollView.addSubview(emailField)
@@ -144,5 +150,29 @@ extension LoginViewController: UITextFieldDelegate {
             loginAccount()
         }
         return true
+    }
+}
+
+extension LoginViewController: LoginButtonDelegate {
+    
+    func loginButton(_ loginButton: FBLoginButton, didCompleteWith result: LoginManagerLoginResult?, error: Error?) {
+        guard let token = result?.token?.tokenString else {
+            print("Failed to login user with facebook")
+            return
+        }
+        let credential = FacebookAuthProvider.credential(withAccessToken: token)
+        FirebaseAuth.Auth.auth().signIn(with: credential) { [weak self] authResult, error in
+            guard let strongSelf = self else { return  }
+            guard authResult != nil, error == nil else {
+                print("Facebook credentials login failed, MFA may be needed")
+                return
+            }
+            print("Successfully logged in user")
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+        }
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: FBLoginButton) {
+         
     }
 }
